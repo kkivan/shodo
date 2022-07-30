@@ -3,13 +3,13 @@ import XCTest
 
 final class shodoTests: XCTestCase {
 
-    func makeSettings(@StringBuilder _ content: () -> [String]) -> [String] {
+    func makeStrings(@StringBuilder _ content: () -> [String]) -> [String] {
         content()
     }
 
-    func testExample() throws {
+    func testBorders() throws {
 
-        let r = makeSettings {
+        let r = makeStrings {
             Border {
                 Border {
                     Border {
@@ -42,8 +42,9 @@ final class shodoTests: XCTestCase {
         │ three         │
         └───────────────┘
         """
+        let joined = r.joined(separator: "\n")
 
-        XCTAssertEqual(r.joined(separator: "\n"), expected)
+        XCTAssertEqual(joined, expected)
     }
 
 }

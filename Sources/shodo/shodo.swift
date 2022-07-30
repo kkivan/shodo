@@ -42,20 +42,22 @@ struct Border: ToString {
 
     var asStrings: [String] {
         let s = strings()
-        let length = s.map(\.count).max()! + 2
-        let horizontal = "─".repeating(length)
+        let length = s.map(\.count).max() ?? 1
+        let horizontal = "─".repeating(length + 2)
         let top = "╭" + horizontal + "╮"
         let bottom = "└" + horizontal + "┘"
-        let body = s.map { "│ " + $0.fixed(length - 2) + " │"}
+        let body = s.map { "│ " + $0.fixed(length) + " │"}
         return [top] + body + [bottom]
     }
 }
 
 extension String {
+
     func repeating(_ times: Int) -> String {
         let arr = Array(repeating: self, count: times)
         return arr.reduce("", +)
     }
+
     func fixed(_ length: Int) -> String {
         if count < length {
             return self + " ".repeating(length - count)
