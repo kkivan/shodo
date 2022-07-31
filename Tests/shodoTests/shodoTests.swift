@@ -81,6 +81,15 @@ final class shodoTests: XCTestCase {
         let joined = r.joined(separator: "\n")
         XCTAssertEqual(joined, expected)
     }
+
+    func testForEach() {
+        let input = ["one", "two", "three"]
+
+        let r = makeStrings {
+            ForEach(strings: input)
+        }
+        XCTAssertEqual(input, r)
+    }
 }
 
 /*
