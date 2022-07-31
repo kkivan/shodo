@@ -18,6 +18,7 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "ShodoTests",
-            dependencies: [.target(name: "Shodo"), .product(name: "CustomDump", package: "swift-custom-dump")]),
+            dependencies: [.target(name: "Shodo"),
+                           .product(name: "CustomDump", package: "swift-custom-dump")]),
     ]
 )

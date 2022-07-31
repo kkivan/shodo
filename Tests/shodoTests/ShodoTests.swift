@@ -4,10 +4,6 @@ import CustomDump
 
 final class shodoTests: XCTestCase {
 
-    func printStrings(_ strings: [String]) {
-        print(strings.joined(separator: "\n"))
-    }
-
     func testBorders() throws {
         let r = compose {
             Border {
@@ -42,9 +38,8 @@ final class shodoTests: XCTestCase {
         │ three         │
         └───────────────┘
         """
-        let joined = r.joined(separator: "\n")
 
-        XCTAssertEqual(joined, expected)
+        assert(r, expected)
     }
 
     func testTreeWithIndents() {
@@ -74,9 +69,7 @@ final class shodoTests: XCTestCase {
                  Autofixtures.swift
                  FixtureDecoder.swift
         """
-
-        let joined = r.joined(separator: "\n")
-        XCTAssertEqual(joined, expected)
+        assert(r, expected)
     }
 
     func testComposeArrays() {
@@ -92,7 +85,7 @@ final class shodoTests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(r, input + input + input)
+        XCTAssertNoDifference(r, input + input + input)
     }
 
     func testNumbered() {
@@ -114,7 +107,7 @@ final class shodoTests: XCTestCase {
          9 | line
         10 | line
         """
-        XCTAssertEqual(r.joined(separator: "\n"), expected)
+        assert(r, expected)
     }
 
     func testList() {
@@ -125,13 +118,12 @@ final class shodoTests: XCTestCase {
                 "three"
             }
         }
-        printStrings(r)
         let expected = """
         - one
         - two
         - three
         """
-        XCTAssertEqual(r.joined(separator: "\n"), expected)
+        assert(r, expected)
     }
 
     func testNumberedList() {
@@ -165,7 +157,7 @@ final class shodoTests: XCTestCase {
         11.two
         12.three
         """
-        XCTAssertEqual(r.joined(separator: "\n"), expected)
+        assert(r, expected)
     }
 
     func testTable() {
@@ -198,7 +190,21 @@ final class shodoTests: XCTestCase {
                 Column(header: "Email", value: \User.email)
             }
         }
-        XCTAssertNoDifference(r.joined(separator: "\n"), expected)
+        assert(r, expected)
+    }
+
+    func assert(_ strings: [String], _ expected: String) {
+        XCTAssertNoDifference(strings.joined(separator: "\n"), expected)
+    }
+
+    func testWidth() {
+
+    }
+}
+
+extension Array where Element == String {
+    func print() {
+        Swift.print(joined(separator: "\n"))
     }
 }
 
