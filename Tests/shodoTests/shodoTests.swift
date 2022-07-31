@@ -3,23 +3,19 @@ import XCTest
 
 final class shodoTests: XCTestCase {
 
-    func makeStrings(@StringBuilder _ content: () -> [String]) -> [String] {
-        content()
-    }
-
     func printStrings(_ strings: [String]) {
         print(strings.joined(separator: "\n"))
     }
 
     func testBorders() throws {
-        let r = makeStrings {
+        let r = compose {
             Border {
                 Border {
                     Border {
                         "three"
                     }
                     List(prefix: "+") {
-                        StringGroup {
+                        compose {
                             "another"
                             "1"
                         }
@@ -32,9 +28,9 @@ final class shodoTests: XCTestCase {
         }
 
         let expected = """
-        ╭───────────────╮
-        │ ╭───────────╮ │
-        │ │ ╭───────╮ │ │
+        ┌───────────────┐
+        │ ┌───────────┐ │
+        │ │ ┌───────┐ │ │
         │ │ │ three │ │ │
         │ │ └───────┘ │ │
         │ │ + another │ │
@@ -61,8 +57,8 @@ final class shodoTests: XCTestCase {
                           files: [.init(name: "Autofixtures",
                                         files: ["Autofixtures.swift",
                                                 "FixtureDecoder.swift"])])]
-
-        let r = makeStrings {
+        
+        let r = compose {
             TreeBuilder(trees: tree)
         }
         let expected = """
@@ -82,13 +78,17 @@ final class shodoTests: XCTestCase {
         XCTAssertEqual(joined, expected)
     }
 
-    func testForEach() {
+    func testComposeArrays() {
         let input = ["one", "two", "three"]
 
-        let r = makeStrings {
-            ForEach(strings: input)
+        let r = compose {
+            compose {
+                input
+                input
+            }
         }
-        XCTAssertEqual(input, r)
+
+        printStrings(r)
     }
 }
 
@@ -118,8 +118,8 @@ extension Files: ExpressibleByStringLiteral {
 }
 
 extension Files: Tree {
-    var value: String {
-        name
+    var value: [String] {
+        [name]
     }
 
     var children: [Files] {
