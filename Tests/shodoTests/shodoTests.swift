@@ -66,16 +66,16 @@ final class shodoTests: XCTestCase {
             TreeBuilder(trees: tree)
         }
         let expected = """
-        LICENSE
-        Package.swift
-        AutofixturesTests
-           OneTests.swift
-           TwoTests.swift
-        README.md
-        Sources
-           Autofixtures
-              Autofixtures.swift
-              FixtureDecoder.swift
+           LICENSE
+           Package.swift
+           AutofixturesTests
+              OneTests.swift
+              TwoTests.swift
+           README.md
+           Sources
+              Autofixtures
+                 Autofixtures.swift
+                 FixtureDecoder.swift
         """
         printStrings(r)
         let joined = r.joined(separator: "\n")

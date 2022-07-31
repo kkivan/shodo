@@ -76,14 +76,11 @@ struct TreeBuilder: ToString {
 
     var asStrings: [String] {
         let padding = "  "
-        return trees.flatMap { root in
-            [root.value] +
-            List(prefix: padding) {
-                ForEach(strings: root.children.flatMap {
-                    TreeBuilder(trees: [$0]).asStrings
-                })
-            }.asStrings
-        }
+        return List(prefix: padding) {
+            ForEach(strings: trees.flatMap { root in
+                [root.value] +
+                TreeBuilder(trees: root.children).asStrings })
+        }.asStrings
     }
 }
 
