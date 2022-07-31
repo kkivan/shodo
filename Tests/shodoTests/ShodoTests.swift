@@ -1,5 +1,5 @@
 import XCTest
-@testable import Shodo
+import Shodo
 import CustomDump
 
 final class shodoTests: XCTestCase {

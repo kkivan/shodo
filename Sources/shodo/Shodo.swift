@@ -19,9 +19,9 @@ public struct StringBuilder {
     }
 }
 
-struct List: ToString {
-    enum Prefix: ExpressibleByStringLiteral {
-        init(stringLiteral value: StringLiteralType) {
+public struct List: ToString {
+    public enum Prefix: ExpressibleByStringLiteral {
+        public init(stringLiteral value: StringLiteralType) {
             self = .literal(value)
         }
         case literal(String)
@@ -31,7 +31,12 @@ struct List: ToString {
     var prefix: Prefix
     @StringBuilder var strings: () -> [String]
 
-    var asStrings: [String] {
+    public init(prefix: Prefix, @StringBuilder strings: @escaping () -> [String]) {
+        self.prefix = prefix
+        self.strings = strings
+    }
+
+    public var asStrings: [String] {
         switch prefix {
             case .literal(let literal):
                 return strings().map { "\(literal) \($0)" }
@@ -44,10 +49,13 @@ struct List: ToString {
     }
 }
 
-struct Border: ToString {
+public struct Border: ToString {
     @StringBuilder var strings: () -> [String]
+    public init(@StringBuilder strings: @escaping () -> [String]) {
+        self.strings = strings
+    }
 
-    var asStrings: [String] {
+    public var asStrings: [String] {
         let s = strings()
         let length = s.map(\.count).max() ?? 1
         let horizontal = "─".repeating(length + 2)
@@ -81,11 +89,15 @@ extension String {
     }
 }
 
-struct TreeBuilder: ToString {
+public struct TreeBuilder: ToString {
 
     let trees: [Tree]
 
-    var asStrings: [String] {
+    public init(trees: [Tree]) {
+        self.trees = trees
+    }
+
+    public var asStrings: [String] {
         compose {
             List(prefix: "  ") {
                 trees.flatMap { root in
@@ -99,19 +111,19 @@ struct TreeBuilder: ToString {
     }
 }
 
-protocol Tree {
+public protocol Tree {
     var value: [String] { get }
     var children: [Self] { get }
 }
 
-func compose(@StringBuilder _ content: () -> [String]) -> [String] {
+public func compose(@StringBuilder _ content: () -> [String]) -> [String] {
     content()
 }
 
 public struct Numbered: ToString {
     let separator: String
     @StringBuilder var strings: () -> [String]
-    init(_ separator: String = " | ", strings: @escaping () -> [String]) {
+    public init(_ separator: String = " | ", strings: @escaping () -> [String]) {
         self.separator = separator
         self.strings = strings
     }
@@ -123,31 +135,41 @@ public struct Numbered: ToString {
     }
 }
 
-extension Int {
+public extension Int {
     var string: String {
         String(self)
     }
 }
 
 @resultBuilder
-struct TableBuilder {
+public struct TableBuilder {
     public static func buildBlock<A>(_ parts: Column<A>...) -> [Column<A>] {
         parts
     }
 }
 
-struct Column<Row> {
+public struct Column<Row> {
     let header: String
     let value: KeyPath<Row, String>
+    public init(header: String,
+                value: KeyPath<Row, String>) {
+        self.header = header
+        self.value = value
+    }
 }
 
-struct Table<Row>: ToString {
+public struct Table<Row>: ToString {
 
     var rows: [Row]
 
     @TableBuilder var columns: () -> [Column<Row>]
 
-    var asStrings: [String] {
+    public init(rows: [Row], @TableBuilder columns: @escaping () -> [Column<Row>]) {
+        self.rows = rows
+        self.columns = columns
+    }
+
+    public var asStrings: [String] {
         let table = columns().map { column in
             [column.header] + rows.map { $0[keyPath: column.value] }
         }
@@ -156,6 +178,7 @@ struct Table<Row>: ToString {
         let z = (0...a.count).map { i in
             a.map { $0[i] }
         }
+
         let cross = "─┼─"
         let separator = "┼─" + widths.map { "─".repeating($0) }.joined(separator: cross) + "─┼"
         let r = [separator] + z.map { "| " + $0.joined(separator: " | ") + " |" }.flatMap {
