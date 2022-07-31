@@ -1,11 +1,10 @@
+import Foundation
 public protocol ToString {
     var asStrings: [String] { get }
 }
 
 extension String: ToString {
-    public var asStrings: [String] {
-        [self]
-    }
+    public var asStrings: [String] { [self] }
 }
 
 @resultBuilder
@@ -52,7 +51,6 @@ struct Border: ToString {
 }
 
 extension String {
-
     func repeating(_ times: Int) -> String {
         let arr = Array(repeating: self, count: times)
         return arr.reduce("", +)
@@ -65,4 +63,31 @@ extension String {
 
         return self
     }
+}
+
+struct ForEach: ToString {
+    let strings: [String]
+
+    var asStrings: [String] { strings }
+}
+
+struct TreeBuilder: ToString {
+    let trees: [Tree]
+
+    var asStrings: [String] {
+        let padding = "  "
+        return trees.flatMap { root in
+            [root.value] +
+            List(prefix: padding) {
+                ForEach(strings: root.children.flatMap {
+                    TreeBuilder(trees: [$0]).asStrings
+                })
+            }.asStrings
+        }
+    }
+}
+
+protocol Tree {
+    var value: String { get }
+    var children: [Self] { get }
 }
