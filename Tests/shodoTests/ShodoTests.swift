@@ -5,7 +5,7 @@ import CustomDump
 final class shodoTests: XCTestCase {
 
     func testBorders() throws {
-        let r = compose {
+        assert(compose {
             Border {
                 Border {
                     Border {
@@ -22,9 +22,8 @@ final class shodoTests: XCTestCase {
                 "two"
                 "three"
             }
-        }
-
-        let expected = """
+        },
+        """
         ┌───────────────┐
         │ ┌───────────┐ │
         │ │ ┌───────┐ │ │
@@ -37,9 +36,7 @@ final class shodoTests: XCTestCase {
         │ two           │
         │ three         │
         └───────────────┘
-        """
-
-        assert(r, expected)
+        """)
     }
 
     func testTreeWithIndents() {
@@ -53,11 +50,11 @@ final class shodoTests: XCTestCase {
                           files: [.init(name: "Autofixtures",
                                         files: ["Autofixtures.swift",
                                                 "FixtureDecoder.swift"])])]
-        
-        let r = compose {
+
+        assert(compose {
             TreeBuilder(trees: tree)
-        }
-        let expected = """
+        },
+        """
            LICENSE
            Package.swift
            AutofixturesTests
@@ -68,8 +65,7 @@ final class shodoTests: XCTestCase {
               Autofixtures
                  Autofixtures.swift
                  FixtureDecoder.swift
-        """
-        assert(r, expected)
+        """)
     }
 
     func testComposeArrays() {
@@ -89,13 +85,11 @@ final class shodoTests: XCTestCase {
     }
 
     func testNumbered() {
-        let r = compose {
+        assert(compose {
             Numbered {
                 Array(repeating: "line", count: 10)
             }
-        }
-
-        let expected = """
+        }, """
          1 | line
          2 | line
          3 | line
@@ -106,44 +100,44 @@ final class shodoTests: XCTestCase {
          8 | line
          9 | line
         10 | line
-        """
-        assert(r, expected)
+        """)
     }
 
     func testList() {
-        let r = compose {
-            List(prefix: .dashed) {
-                "one"
-                "two"
-                "three"
-            }
-        }
-        let expected = """
+        assert(
+            compose {
+                List(prefix: .dashed) {
+                    "one"
+                    "two"
+                    "three"
+                }
+            },
+        """
         - one
         - two
         - three
-        """
-        assert(r, expected)
+        """)
     }
 
     func testNumberedList() {
-        let r = compose {
-            List(prefix:.numbered) {
-                "one"
-                "two"
-                "three"
-                "one"
-                "two"
-                "three"
-                "one"
-                "two"
-                "three"
-                "one"
-                "two"
-                "three"
-            }
-        }
-        let expected = """
+        assert(
+            compose {
+                List(prefix:.numbered) {
+                    "one"
+                    "two"
+                    "three"
+                    "one"
+                    "two"
+                    "three"
+                    "one"
+                    "two"
+                    "three"
+                    "one"
+                    "two"
+                    "three"
+                }
+            },
+        """
          1.one
          2.two
          3.three
@@ -156,22 +150,10 @@ final class shodoTests: XCTestCase {
         10.one
         11.two
         12.three
-        """
-        assert(r, expected)
+        """)
     }
 
     func testTable() {
-        let expected = """
-        ┼─────┼───────┼────────────────────┼
-        |  Id |  Name |              Email |
-        ┼─────┼───────┼────────────────────┼
-        |   1 |  John |      mail@mail.com |
-        ┼─────┼───────┼────────────────────┼
-        |   2 |  Jack |      mail@mail.com |
-        ┼─────┼───────┼────────────────────┼
-        | 300 | Maria | mail@mail-mail.com |
-        ┼─────┼───────┼────────────────────┼
-        """
 
         struct User {
             let id: Int
@@ -183,14 +165,24 @@ final class shodoTests: XCTestCase {
                              User(id: 2, email: "mail@mail.com", name: "Jack"),
                              User(id: 300, email: "mail@mail-mail.com", name: "Maria")]
 
-        let r = compose {
+        assert(compose {
             Table(rows: users) {
                 Column(header: "Id", value: \User.id.string)
                 Column(header: "Name", value: \User.name)
                 Column(header: "Email", value: \User.email)
             }
-        }
-        assert(r, expected)
+        },
+        """
+        ┼─────┼───────┼────────────────────┼
+        |  Id |  Name |              Email |
+        ┼─────┼───────┼────────────────────┼
+        |   1 |  John |      mail@mail.com |
+        ┼─────┼───────┼────────────────────┼
+        |   2 |  Jack |      mail@mail.com |
+        ┼─────┼───────┼────────────────────┼
+        | 300 | Maria | mail@mail-mail.com |
+        ┼─────┼───────┼────────────────────┼
+        """)
     }
 
     func assert(_ strings: [String], _ expected: String) {
@@ -203,8 +195,10 @@ final class shodoTests: XCTestCase {
 }
 
 extension Array where Element == String {
-    func print() {
-        Swift.print(joined(separator: "\n"))
+    func print() -> String {
+        let joined = joined(separator: "\n")
+        Swift.print(joined)
+        return joined
     }
 }
 
