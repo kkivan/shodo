@@ -116,6 +116,39 @@ final class shodoTests: XCTestCase {
         XCTAssertEqual(r.joined(separator: "\n"), expected)
     }
 
+    func testNumberedList() {
+        let r = compose {
+            List(prefix:.numbered) {
+                "one"
+                "two"
+                "three"
+                "one"
+                "two"
+                "three"
+                "one"
+                "two"
+                "three"
+                "one"
+                "two"
+                "three"
+            }
+        }
+        let expected = """
+         1.one
+         2.two
+         3.three
+         4.one
+         5.two
+         6.three
+         7.one
+         8.two
+         9.three
+        10.one
+        11.two
+        12.three
+        """
+        XCTAssertEqual(r.joined(separator: "\n"), expected)
+    }
 }
 
 /*

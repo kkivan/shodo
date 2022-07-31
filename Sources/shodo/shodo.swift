@@ -20,11 +20,27 @@ public struct StringBuilder {
 }
 
 struct List: ToString {
-    var prefix: String
+    enum Prefix: ExpressibleByStringLiteral {
+        init(stringLiteral value: StringLiteralType) {
+            self = .literal(value)
+        }
+        case literal(String)
+        case dashed
+        case numbered
+    }
+    var prefix: Prefix
     @StringBuilder var strings: () -> [String]
 
     var asStrings: [String] {
-        strings().map { "\(prefix) \($0)" }
+        switch prefix {
+            case .literal(let literal):
+                return strings().map { "\(literal) \($0)" }
+            case .dashed:
+                return strings().map { "\("-") \($0)" }
+            case .numbered:
+                return compose { Numbered(".") { strings() }}
+        }
+
     }
 }
 
@@ -93,12 +109,16 @@ func compose(@StringBuilder _ content: () -> [String]) -> [String] {
 }
 
 public struct Numbered: ToString {
+    let separator: String
     @StringBuilder var strings: () -> [String]
+    init(_ separator: String = " | ", strings: @escaping () -> [String]) {
+        self.separator = separator
+        self.strings = strings
+    }
 
     public var asStrings: [String] {
         let numbered = zip(1..., strings()).map { (String($0.0), $0.1)}
         let width = numbered.map(\.0.count).max() ?? 0
-        return numbered.map { "\($0.0.spaceLeft(width)) | \($0.1)" }
+        return numbered.map { "\($0.0.spaceLeft(width))\(separator)\($0.1)" }
     }
 }
-
