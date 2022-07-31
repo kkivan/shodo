@@ -4,20 +4,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "shodo",
+    name: "Shodo",
     products: [
         .library(
-            name: "shodo",
-            targets: ["shodo"]),
+            name: "Shodo",
+            targets: ["Shodo"]),
     ],
     dependencies: [.package(url: "git@github.com:pointfreeco/swift-custom-dump.git",
                             exact:  "0.5.0")],
     targets: [
         .target(
-            name: "shodo",
+            name: "Shodo",
             dependencies: []),
         .testTarget(
-            name: "shodoTests",
-            dependencies: [.target(name: "shodo"), .product(name: "CustomDump", package: "swift-custom-dump")]),
+            name: "ShodoTests",
+            dependencies: [.target(name: "Shodo"), .product(name: "CustomDump", package: "swift-custom-dump")]),
     ]
 )
