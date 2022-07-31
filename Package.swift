@@ -10,13 +10,14 @@ let package = Package(
             name: "shodo",
             targets: ["shodo"]),
     ],
-    dependencies: [],
+    dependencies: [.package(url: "git@github.com:pointfreeco/swift-custom-dump.git",
+                            exact:  "0.5.0")],
     targets: [
         .target(
             name: "shodo",
             dependencies: []),
         .testTarget(
             name: "shodoTests",
-            dependencies: ["shodo"]),
+            dependencies: [.target(name: "shodo"), .product(name: "CustomDump", package: "swift-custom-dump")]),
     ]
 )
