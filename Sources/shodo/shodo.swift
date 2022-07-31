@@ -83,3 +83,12 @@ protocol Tree {
 func compose(@StringBuilder _ content: () -> [String]) -> [String] {
     content()
 }
+
+public struct Numbered: ToString {
+    @StringBuilder var strings: () -> [String]
+
+    public var asStrings: [String] {
+        zip(1..., strings()).map { "\($0.0) | \($0.1)" }
+    }
+}
+
