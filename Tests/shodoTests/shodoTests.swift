@@ -166,6 +166,81 @@ final class shodoTests: XCTestCase {
         """
         XCTAssertEqual(r.joined(separator: "\n"), expected)
     }
+    
+    func testTable() {
+        let expected = """
+        ─┼─────┼───────┼────────────────────┼─
+         |  Id |  Name |              Email |
+        ─┼─────┼───────┼────────────────────┼─
+         |   1 |  John |      mail@mail.com |
+        ─┼─────┼───────┼────────────────────┼─
+         |   2 |  Jack |      mail@mail.com |
+        ─┼─────┼───────┼────────────────────┼─
+         | 300 | Maria | mail@mail-mail.com |
+        ─┼─────┼───────┼────────────────────┼─
+        """
+
+        struct User {
+            let id: Int
+            let email: String
+            let name: String
+        }
+
+        let users: [User] = [User(id: 1, email: "mail@mail.com", name: "John"),
+                             User(id: 2, email: "mail@mail.com", name: "Jack"),
+                             User(id: 300, email: "mail@mail-mail.com", name: "Maria")]
+
+        let r = compose {
+            Table(rows: users) {
+                Column(header: "Id", value: \User.id.string)
+                Column(header: "Name", value: \User.name)
+                Column(header: "Email", value: \User.email)
+            }
+        }
+        printStrings(r)
+        XCTAssertEqual(r.joined(separator: "\n"), expected)
+    }
+}
+
+extension Int {
+    var string: String {
+        String(self)
+    }
+}
+
+@resultBuilder
+struct TableBuilder {
+    public static func buildBlock<A>(_ parts: Column<A>...) -> [Column<A>] {
+        parts
+    }
+}
+
+struct Column<Row> {
+    let header: String
+    let value: KeyPath<Row, String>
+}
+
+struct Table<Row>: ToString {
+
+    var rows: [Row]
+    
+    @TableBuilder var columns: () -> [Column<Row>]
+
+    var asStrings: [String] {
+        var table = columns().map { column in
+            [column.header] + rows.map { $0[keyPath: column.value] }
+        }
+        let widths = table.map { $0.map(\.count).max() ?? 0 }
+        let a = zip(table, widths).map { column, width in column.map { $0.spaceLeft(width)}  }
+        let z = (0...a.count).map { i in
+            a.map { $0[i] }
+        }
+        let separator = "─┼─" + widths.map { "─".repeating($0) }.joined(separator: "─┼─") + "─┼─"
+        let r = [separator] + z.map { " | " + $0.joined(separator: " | ") + " | " }.flatMap {
+            [$0, separator]
+        }
+        return r
+    }
 }
 
 /*
