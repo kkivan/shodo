@@ -156,8 +156,9 @@ struct Table<Row>: ToString {
         let z = (0...a.count).map { i in
             a.map { $0[i] }
         }
-        let separator = "─┼─" + widths.map { "─".repeating($0) }.joined(separator: "─┼─") + "─┼─"
-        let r = [separator] + z.map { " | " + $0.joined(separator: " | ") + " | " }.flatMap {
+        let cross = "─┼─"
+        let separator = "┼─" + widths.map { "─".repeating($0) }.joined(separator: cross) + "─┼"
+        let r = [separator] + z.map { "| " + $0.joined(separator: " | ") + " |" }.flatMap {
             [$0, separator]
         }
         return r

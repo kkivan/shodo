@@ -170,15 +170,15 @@ final class shodoTests: XCTestCase {
 
     func testTable() {
         let expected = """
-        ─┼─────┼───────┼────────────────────┼─
-         |  Id |  Name |              Email |
-        ─┼─────┼───────┼────────────────────┼─
-         |   1 |  John |      mail@mail.com |
-        ─┼─────┼───────┼────────────────────┼─
-         |   2 |  Jack |      mail@mail.com |
-        ─┼─────┼───────┼────────────────────┼─
-         | 300 | Maria | mail@mail-mail.com |
-        ─┼─────┼───────┼────────────────────┼─
+        ┼─────┼───────┼────────────────────┼
+        |  Id |  Name |              Email |
+        ┼─────┼───────┼────────────────────┼
+        |   1 |  John |      mail@mail.com |
+        ┼─────┼───────┼────────────────────┼
+        |   2 |  Jack |      mail@mail.com |
+        ┼─────┼───────┼────────────────────┼
+        | 300 | Maria | mail@mail-mail.com |
+        ┼─────┼───────┼────────────────────┼
         """
 
         struct User {
@@ -198,7 +198,6 @@ final class shodoTests: XCTestCase {
                 Column(header: "Email", value: \User.email)
             }
         }
-        printStrings(r)
         XCTAssertNoDifference(r.joined(separator: "\n"), expected)
     }
 }
