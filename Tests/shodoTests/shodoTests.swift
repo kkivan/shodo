@@ -73,7 +73,7 @@ final class shodoTests: XCTestCase {
                  Autofixtures.swift
                  FixtureDecoder.swift
         """
-        printStrings(r)
+        
         let joined = r.joined(separator: "\n")
         XCTAssertEqual(joined, expected)
     }
@@ -86,9 +86,13 @@ final class shodoTests: XCTestCase {
                 input
                 input
             }
+            compose {
+                input
+            }
         }
 
         printStrings(r)
+        XCTAssertEqual(r, input + input + input)
     }
 }
 
