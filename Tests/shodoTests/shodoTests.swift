@@ -97,16 +97,21 @@ final class shodoTests: XCTestCase {
     func testNumbered() {
         let r = compose {
             Numbered {
-                "one"
-                "two"
-                "three"
+                Array(repeating: "line", count: 10)
             }
         }
 
         let expected = """
-        1 | one
-        2 | two
-        3 | three
+         1 | line
+         2 | line
+         3 | line
+         4 | line
+         5 | line
+         6 | line
+         7 | line
+         8 | line
+         9 | line
+        10 | line
         """
         XCTAssertEqual(r.joined(separator: "\n"), expected)
     }

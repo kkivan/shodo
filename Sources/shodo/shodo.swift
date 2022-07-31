@@ -37,7 +37,7 @@ struct Border: ToString {
         let horizontal = "─".repeating(length + 2)
         let top = "┌" + horizontal + "┐"
         let bottom = "└" + horizontal + "┘"
-        let body = s.map { "│ " + $0.fixed(length) + " │"}
+        let body = s.map { "│ " + $0.spaceRight(length) + " │"}
         return [top] + body + [bottom]
     }
 }
@@ -48,9 +48,17 @@ extension String {
         return arr.reduce("", +)
     }
 
-    func fixed(_ length: Int) -> String {
+    func spaceRight(_ length: Int) -> String {
         if count < length {
             return self + " ".repeating(length - count)
+        }
+
+        return self
+    }
+
+    func spaceLeft(_ length: Int) -> String {
+        if count < length {
+            return " ".repeating(length - count) + self
         }
 
         return self
@@ -88,7 +96,9 @@ public struct Numbered: ToString {
     @StringBuilder var strings: () -> [String]
 
     public var asStrings: [String] {
-        zip(1..., strings()).map { "\($0.0) | \($0.1)" }
+        let numbered = zip(1..., strings()).map { (String($0.0), $0.1)}
+        let width = numbered.map(\.0.count).max() ?? 0
+        return numbered.map { "\($0.0.spaceLeft(width)) | \($0.1)" }
     }
 }
 
